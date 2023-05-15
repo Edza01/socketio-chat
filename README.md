@@ -1,4 +1,4 @@
-# socketio-chat
+###  socketio-chat
 
 
 Socket.IO is a library that enables low-latency, 
@@ -11,6 +11,7 @@ with any data you want. Any objects that can be encoded as JSON will do,
 and binary data is supported too.
 
 
+## How to launch
 ```
 Install: npm i 
 
