@@ -11,16 +11,25 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
+});
+
 io.on('connection', (socket) => {
   socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
+    io.emit('chat message', { nickname: socket.nickname, msg: msg });
   });
 
-  console.log('a user connected');
+  socket.on('set nickname', (nickname) => {
+    socket.nickname = nickname;
+    io.emit('user connected', { nickname: socket.nickname });
+  });
+
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    io.emit('user disconnected', { nickname: socket.nickname });
   });
 });
+
 
 http.listen(port, () => {
   console.log(`Socket.IO server running at http://localhost:${port}/`);
