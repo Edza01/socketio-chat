@@ -25,9 +25,9 @@
         item.textContent = `user ${status}`;
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
-      };
-      
-      socket.on('connect', () => handleUserStatus('connected'));
-      socket.on('disconnect', () => handleUserStatus('disconnected'));
-      
+    };
+
+    socket.on('connect', () => handleUserStatus('connected'));
+    socket.on('disconnect', () => handleUserStatus('disconnected'));
+
 })();

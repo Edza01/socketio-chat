@@ -11,7 +11,10 @@ with any data you want. Any objects that can be encoded as JSON will do,
 and binary data is supported too.
 
 
-Launch:
-    node index.js
+```
+Install: npm i 
+
+Launch: node index.js
     
-http://localhost:3000
+Use: http://localhost:3000
+```
