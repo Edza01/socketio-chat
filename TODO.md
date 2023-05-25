@@ -18,5 +18,11 @@
 - [ ] Show who’s online.
 
 - [ ] Add private messaging.
+
+- [ ] Add edit sent message.
+
+- [ ] Add console log connected user ip and browser information.
+
+- [ ] Add log in, log out.
 ```
 
