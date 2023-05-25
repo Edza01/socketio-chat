@@ -3,6 +3,7 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const path = require('path');
+const { disconnect } = require('process');
 const port = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -16,12 +17,17 @@ app.get('/favicon.ico', (req, res) => {
 });
 
 io.on('connection', (socket) => {
+
+  console.log('a user connected');
+  
+
   socket.on('chat message', (msg) => {
     io.emit('chat message', { nickname: socket.nickname, msg: msg });
   });
 
   socket.on('set nickname', (nickname) => {
     socket.nickname = nickname;
+    console.log('User with nickname connected:', socket.nickname); 
     io.emit('user connected', { nickname: socket.nickname });
   });
 
