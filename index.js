@@ -34,6 +34,21 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     io.emit('user disconnected', { nickname: socket.nickname });
   });
+
+
+
+
+
+  // new
+ 
+  socket.on('is typing', () => {
+    // Broadcasting To all connected clients except the sender - broadcast
+    socket.broadcast.emit('is typing', { nickname: socket.nickname });
+  });
+  // new
+
+
+
 });
 
 

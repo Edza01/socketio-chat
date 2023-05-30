@@ -22,6 +22,38 @@
     window.scrollTo(0, document.body.scrollHeight);
   });
 
+
+
+
+  // new
+
+  var isTyping = false; // Track typing state
+
+  // Add an event listener for the 'keyup' event to detect typing
+  input.addEventListener('keyup', function () {
+    if (!isTyping && input.value.trim() !== '') {
+      isTyping = true;
+      socket.emit('is typing'); // Emit the 'is typing' event to the server
+    } else if (isTyping && input.value.trim() === '') {
+      isTyping = false;
+    }
+  });
+
+  // Add a socket event listener for 'is typing'
+  socket.on('is typing', function (data) {
+    var { nickname } = data;
+    var item = document.createElement('li');
+    item.textContent = `${nickname}: is typing`;
+    messages.appendChild(item);
+    window.scrollTo(0, document.body.scrollHeight);
+  });
+
+
+  
+  // new
+
+
+
   const getNickname = () => {
     const storedNickname = localStorage.getItem('nickname');
     if (storedNickname) {
