@@ -45,19 +45,32 @@
 
   socket.emit('set nickname', nickname);
 
-  socket.on('user connected', function (data) {
-    const { nickname } = data;
-    const item = document.createElement('li');
-    item.textContent = `${nickname} connected`;
-    messages.appendChild(item);
+
+
+  let reloadData = window.performance.getEntriesByType("navigation")[0].type;
+  console.log(reloadData);
+
+  socket.on('user connected', function (data) 
+  {
+    if (reloadData != 'reload')
+    {
+      const { nickname } = data;
+      const item = document.createElement('li');
+      item.textContent = `${nickname} connected`;
+      messages.appendChild(item);
+    }
     window.scrollTo(0, document.body.scrollHeight);
   });
 
-  socket.on('user disconnected', function (data) {
-    const { nickname } = data;
-    const item = document.createElement('li');
-    item.textContent = `${nickname} disconnected`;
-    messages.appendChild(item);
+  socket.on('user disconnected', function (data) 
+  {
+    if (reloadData != 'reload')
+    {
+      const { nickname } = data;
+      const item = document.createElement('li');
+      item.textContent = `${nickname} disconnected`;
+      messages.appendChild(item);
+    }
     window.scrollTo(0, document.body.scrollHeight);
   });
 
