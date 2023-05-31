@@ -20,6 +20,8 @@ It serves static files (HTML, CSS, etc.) from the 'public' directory.
 It listens for socket connections using Socket.IO.
 It defines event handlers for various socket events such as 'connection', 'chat message', 'set nickname', and 'disconnect'.
 The server-side code receives messages from clients and broadcasts them to all connected clients using socket.emit and io.emit.
+
+
 Client-side code (script.js):
 
 The client-side code (public/script.js):
