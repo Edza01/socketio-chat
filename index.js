@@ -3,7 +3,6 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const path = require('path');
-const { disconnect } = require('process');
 const port = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -16,44 +15,38 @@ app.get('/favicon.ico', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
 });
 
-io.on('connection', (socket) => {
+// Create an empty array to store online users
+const onlineUsers = [];
 
+io.on('connection', (socket) => {
   console.log('a user connected');
-  
+
+  socket.on('set nickname', (nickname) => {
+    socket.nickname = nickname;
+    onlineUsers.push(nickname);
+    console.log('User with nickname connected:', socket.nickname);
+    io.emit('user connected', { nickname: socket.nickname, onlineUsers });
+
+    // Emit the updated list of online users to the current client
+    socket.emit('update online users', onlineUsers);
+  });
 
   socket.on('chat message', (msg) => {
     io.emit('chat message', { nickname: socket.nickname, msg: msg });
   });
 
-  socket.on('set nickname', (nickname) => {
-    socket.nickname = nickname;
-    console.log('User with nickname connected:', socket.nickname); 
-    io.emit('user connected', { nickname: socket.nickname });
-  });
-
   socket.on('disconnect', () => {
-    io.emit('user disconnected', { nickname: socket.nickname });
+    if (socket.nickname) {
+      onlineUsers.splice(onlineUsers.indexOf(socket.nickname), 1);
+      io.emit('user disconnected', { nickname: socket.nickname, onlineUsers });
+    }
   });
 
-
-
-
-
-  // new
- 
   socket.on('is typing', () => {
-    // Broadcasting To all connected clients except the sender - broadcast
     socket.broadcast.emit('is typing', { nickname: socket.nickname });
   });
-  // new
-
-
-
 });
-
 
 http.listen(port, () => {
   console.log(`Socket.IO server running at http://localhost:${port}/`);
 });
-
-

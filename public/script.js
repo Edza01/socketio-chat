@@ -4,7 +4,7 @@
   var messages = document.getElementById('messages');
   var form = document.getElementById('form');
   var input = document.getElementById('input');
-  
+  var onlineUsersList = document.getElementById('online-users');
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -13,6 +13,21 @@
       input.value = '';
     }
   });
+
+  // input.addEventListener('keyup', function (e) {
+  //   if (e.keyCode === 13) {
+  //     if (input.value.trim() !== '') {
+  //       socket.emit('chat message', input.value);
+  //       input.value = '';
+  //     }
+  //   } else {
+  //     if (input.value.trim() !== '') {
+  //       socket.emit('is typing');
+  //     } else {
+  //       socket.emit('stop typing');
+  //     }
+  //   }
+  // });
 
   socket.on('chat message', function (data) {
     var { nickname, msg } = data;
@@ -24,8 +39,6 @@
 
 
 
-
-  // new
 
   var isTyping = false; // Track typing state
 
@@ -49,10 +62,70 @@
   });
 
 
-  
-  // new
 
 
+
+  // socket.on('is typing', function (data) {
+  //   var { nickname } = data;
+  //   var item = document.createElement('li');
+  //   item.textContent = `${nickname} is typing`;
+  //   item.id = 'typing-message';
+  //   messages.appendChild(item);
+  //   window.scrollTo(0, document.body.scrollHeight);
+  // });
+
+  // socket.on('stop typing', function () {
+  //   var typingMessage = document.getElementById('typing-message');
+  //   if (typingMessage) {
+  //     typingMessage.remove();
+  //   }
+  // });
+
+
+
+
+  let reloadData = window.performance.getEntriesByType("navigation")[0].type;
+
+
+
+
+
+
+  socket.on('user connected', function (data) {
+
+    if (reloadData != 'reload')
+    {
+      var { nickname } = data;
+      var item = document.createElement('li');
+      item.textContent = `${nickname} connected`;
+      messages.appendChild(item);
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+  });
+
+  socket.on('user disconnected', function (data) {
+
+    if (reloadData != 'reload')
+    {
+      var { nickname } = data;
+      var item = document.createElement('li');
+      item.textContent = `${nickname} disconnected`;
+      messages.appendChild(item);
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+    
+  });
+
+  socket.on('update online users', function (onlineUsers) {
+    onlineUsersList.innerHTML = '';
+    for (var i = 0; i < onlineUsers.length; i++) {
+      var userItem = document.createElement('li');
+      userItem.textContent = onlineUsers[i];
+      onlineUsersList.appendChild(userItem);
+    }
+    // Save the updated online users array in local storage
+    localStorage.setItem('onlineUsers', JSON.stringify(onlineUsers));
+  });
 
   const getNickname = () => {
     const storedNickname = localStorage.getItem('nickname');
@@ -66,7 +139,7 @@
   };
 
   const handleUserNickname = (nickname) => {
-    const item = document.createElement('li');
+    var item = document.createElement('li');
     item.textContent = `Your nickname: ${nickname}`;
     messages.appendChild(item);
     window.scrollTo(0, document.body.scrollHeight);
@@ -76,34 +149,4 @@
   handleUserNickname(nickname);
 
   socket.emit('set nickname', nickname);
-
-
-
-  let reloadData = window.performance.getEntriesByType("navigation")[0].type;
-  console.log(reloadData);
-
-  socket.on('user connected', function (data) 
-  {
-    if (reloadData != 'reload')
-    {
-      const { nickname } = data;
-      const item = document.createElement('li');
-      item.textContent = `${nickname} connected`;
-      messages.appendChild(item);
-    }
-    window.scrollTo(0, document.body.scrollHeight);
-  });
-
-  socket.on('user disconnected', function (data) 
-  {
-    if (reloadData != 'reload')
-    {
-      const { nickname } = data;
-      const item = document.createElement('li');
-      item.textContent = `${nickname} disconnected`;
-      messages.appendChild(item);
-    }
-    window.scrollTo(0, document.body.scrollHeight);
-  });
-
 })();
